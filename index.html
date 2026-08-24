@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Bookmar — a private, offline-first bookmark manager</title>
+<meta name="description" content="Bookmar is a Chrome extension for organizing bookmarks with folders, fuzzy search, and rich previews — no account, no tracking, nothing leaves your device." />
+<style>
+  :root {
+    --bg: #fafaf9;
+    --surface: #ffffff;
+    --text: #111111;
+    --muted: #57534e;
+    --border: #e5e5e3;
+    --accent: #16a34a;
+    --accent-contrast: #ffffff;
+    --radius: 18px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+  }
+
+  a { color: inherit; }
+
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  header.site {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 0;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: -0.01em;
+  }
+
+  .brand .mark {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: var(--accent);
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-weight: 800;
+    font-size: 1rem;
+  }
+
+  nav.site a {
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-left: 22px;
+  }
+  nav.site a:hover { color: var(--text); }
+
+  .hero {
+    text-align: center;
+    padding: 64px 0 56px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.1rem, 5vw, 3.1rem);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    margin: 0 0 18px;
+  }
+
+  .hero p.tagline {
+    color: var(--muted);
+    font-size: 1.15rem;
+    max-width: 560px;
+    margin: 0 auto 32px;
+  }
+
+  .cta-row {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 24px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    border: 1px solid transparent;
+  }
+
+  .btn-primary {
+    background: var(--text);
+    color: #fff;
+  }
+  .btn-primary:hover { background: #000; }
+
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--text);
+    border-color: var(--border);
+  }
+  .btn-secondary:hover { border-color: #ccc; }
+
+  .btn small {
+    display: block;
+    font-weight: 400;
+    opacity: 0.75;
+    font-size: 0.72rem;
+  }
+
+  .note {
+    margin-top: 14px;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  section.features {
+    padding: 40px 0 64px;
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+  }
+
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+  }
+
+  .feature-card h3 {
+    margin: 0 0 8px;
+    font-size: 1.02rem;
+    letter-spacing: -0.01em;
+  }
+
+  .feature-card p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.93rem;
+  }
+
+  section.privacy {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 56px 0 64px;
+    scroll-margin-top: 24px;
+  }
+
+  section.privacy h2 {
+    font-size: 1.7rem;
+    letter-spacing: -0.01em;
+    margin: 0 0 6px;
+  }
+
+  section.privacy .effective-date {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 28px;
+  }
+
+  section.privacy h3 {
+    font-size: 1.05rem;
+    margin: 30px 0 8px;
+  }
+
+  section.privacy p, section.privacy li {
+    color: #292524;
+    font-size: 0.96rem;
+  }
+
+  section.privacy ul { padding-left: 20px; }
+
+  section.privacy .callout {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    font-size: 0.95rem;
+  }
+
+  section.privacy .callout strong { color: var(--text); }
+
+  footer.site {
+    padding: 32px 0 48px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  footer.site a { text-decoration: underline; }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111111;
+      --surface: #171717;
+      --text: #fafafa;
+      --muted: #a3a3a3;
+      --border: rgba(255, 255, 255, 0.12);
+      --accent: #22c55e;
+    }
+    .btn-primary { background: #fafafa; color: #111111; }
+    .btn-primary:hover { background: #fff; }
+    section.privacy p, section.privacy li { color: #e7e5e4; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="site">
+    <div class="brand">
+      <span class="mark">B</span>
+      Bookmar
+    </div>
+    <nav class="site">
+      <a href="#features">Features</a>
+      <a href="#privacy-policy">Privacy</a>
+    </nav>
+  </header>
+</div>
+
+<div class="hero wrap">
+  <h1>A bookmark library that stays out of your way.</h1>
+  <p class="tagline">
+    Folders, fast search, and rich previews for every link you save — with
+    no account, no tracking, and nothing leaving your device unless you ask it to.
+  </p>
+  <div class="cta-row">
+    <!-- TODO: replace with real Chrome Web Store listing URL once published -->
+    <a class="btn btn-primary" href="#">
+      Get it on the Chrome Web Store
+    </a>
+    <a class="btn btn-secondary" href="#privacy-policy">Read the privacy policy</a>
+  </div>
+  <p class="note">Free. No sign-up. Works entirely offline once installed.</p>
+</div>
+
+<section class="features wrap" id="features">
+  <div class="feature-grid">
+    <div class="feature-card">
+      <h3>Bookmarks in more than one folder</h3>
+      <p>A link doesn't have to live in exactly one place — file it under as many folders as make sense, or leave it in the dedicated Unsorted view.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Fast, fuzzy search</h3>
+      <p>Find what you saved by title, site, or roughly when you added it — typos and partial words still find their match.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Rich previews, automatically</h3>
+      <p>Titles, descriptions, cover images, and favicons are fetched for every link you save, so your library actually looks like something.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Sort your way, per folder</h3>
+      <p>Newest or oldest first — set independently for each folder, and remembered.</p>
+    </div>
+    <div class="feature-card">
+      <h3>A default view you control</h3>
+      <p>Pick what opens when Bookmar loads — All Bookmarks, Unsorted, or a specific folder — as a deliberate setting, not a guess.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Add every open tab at once</h3>
+      <p>One click pulls in the URLs of everything you have open, ready to review and save in bulk.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Deletion that asks first</h3>
+      <p>Removing something from a folder and deleting it for good are two different, clearly separated choices.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Card or list view</h3>
+      <p>Browse your library as visual cards or a dense, scannable list — whichever fits what you're doing.</p>
+    </div>
+  </div>
+</section>
+
+<section class="privacy wrap" id="privacy-policy">
+  <h2>Privacy Policy</h2>
+  <div class="effective-date">Effective date: August 23, 2026</div>
+
+  <div class="callout">
+    <strong>The short version:</strong> there is no account, Bookmar doesn't
+    track you, and you have full control over your data — Bookmar runs no
+    server that your data passes through, and where your data lives is
+    always your choice. Adding a bookmark does make a small number of
+    outbound requests to fetch its title and image; that's not tracking,
+    and exactly what's sent is spelled out below.
+  </div>
+
+  <h3>No sign-up, no account</h3>
+  <p>
+    Bookmar has no login, no user accounts, and no user identity of any
+    kind. There is nothing to sign up for and nothing tying your activity
+    to you.
+  </p>
+
+  <h3>You control where your data lives</h3>
+  <p>
+    Bookmar has no backend server of its own — it's a static app with no
+    API to send your data to. Today, your folders and bookmarks (URL,
+    title, description, cover image, favicon, and the date you added them)
+    are stored entirely in your browser's local storage, on your own
+    device, and nothing is synced, backed up, or transmitted anywhere.
+  </p>
+  <ul>
+    <li>
+      As the Chrome extension, this storage is scoped to the extension
+      itself (<code>chrome-extension://&lt;id&gt;</code>) — it's isolated
+      from every website you visit and from any other version of Bookmar
+      you might run (e.g. a local dev build).
+    </li>
+    <li>
+      Bookmar's storage layer is built to support additional storage
+      providers in the future — for example, keeping your library in your
+      own cloud drive instead of only on-device. Whichever provider your
+      library lives in is always something <em>you</em> choose and can see
+      in Settings; it never routes through a server Bookmar operates. This
+      policy will be updated before any such option ships.
+    </li>
+  </ul>
+
+  <h3>What we don't collect</h3>
+  <p>
+    Bookmar contains no analytics, no crash/error reporting, no advertising
+    SDKs, and no cookies. We don't know how many people use Bookmar, what
+    they bookmark, or how they use it — we have no mechanism to find out.
+  </p>
+
+  <h3>The only network requests Bookmar makes</h3>
+  <p>
+    Saving, editing, and organizing bookmarks all work fully offline —
+    adding a link is instant and never waits on the network. Separately,
+    right after you add a bookmark, Bookmar <em>also</em> attempts to look
+    up its title, description, cover image, and icon so your library looks
+    good; if that lookup can't complete (e.g. no connection at the time),
+    the bookmark still gets a usable fallback title instead of being
+    blocked or retried silently in the background. This lookup is the only
+    reason Bookmar talks to the internet, and only the URL you're
+    bookmarking is sent — never your other bookmarks, folders, or any
+    identifying information. The lookups are:
+  </p>
+  <ul>
+    <li><strong>noembed.com</strong> — a general-purpose lookup used for most sites.</li>
+    <li><strong>tiktok.com/oembed</strong> and <strong>youtube.com/oembed</strong> — the official oEmbed endpoints for those two platforms specifically, used instead of the general lookup for better results.</li>
+    <li><strong>r.jina.ai</strong> — reads the bookmarked page's content to help extract an accurate title when the above don't return one.</li>
+    <li><strong>google.com/s2/favicons</strong> — given only the site's domain (not the full URL), returns a favicon when the page doesn't provide its own.</li>
+    <li><strong>api.allorigins.win</strong> and <strong>api.codetabs.com</strong> — used only when running Bookmar as a regular web page (not the installed extension), as a fallback to read a page's content, since browsers block a web page from reading another site's content directly. The installed extension doesn't need this: it's able to read the bookmarked page directly, the same way your browser does when you visit it yourself.</li>
+  </ul>
+  <p>
+    None of these requests carry cookies, sign-in credentials, or any
+    Bookmar identifier — they're anonymous, one-off lookups of a single
+    URL.
+  </p>
+
+  <h3>Chrome extension permissions, explained</h3>
+  <ul>
+    <li>
+      <strong>Host permissions (<code>http://*/*</code>, <code>https://*/*</code>)</strong>
+      — let the extension fetch the page you're bookmarking directly, on
+      your own device, to pull its title/description/image. This is the
+      same access your browser already has when you open the page
+      yourself; Bookmar doesn't route it through any server of ours.
+    </li>
+    <li>
+      <strong><code>tabs</code></strong> — lets the "Add all tabs" button
+      read the URLs of your currently open tabs, so you can bookmark them
+      in bulk. This list is read once, locally, when you click the button,
+      and is only ever used to fill in the add-bookmark form for you to
+      review before saving. It's never sent anywhere.
+    </li>
+  </ul>
+
+  <h3>Changes to this policy</h3>
+  <p>
+    If Bookmar's data handling ever changes, this policy will be updated to
+    reflect it before that change ships.
+  </p>
+
+  <h3>Contact</h3>
+  <p>Questions about this policy: <strong>[add contact email]</strong></p>
+</section>
+
+<footer class="site wrap">
+  Bookmar — <a href="#privacy-policy">Privacy Policy</a>
+</footer>
+
+</body>
+</html>
