@@ -199,7 +199,7 @@
     font-size: 0.96rem;
   }
 
-  section.privacy ul { padding-left: 20px; }
+  section.privacy ul, section.privacy ol { padding-left: 20px; }
 
   section.privacy .callout {
     border: 1px solid var(--border);
@@ -365,8 +365,15 @@
     blocked or retried silently in the background. This lookup is the only
     reason Bookmar talks to the internet, and only the URL you're
     bookmarking is sent — never your other bookmarks, folders, or any
-    identifying information. The lookups are:
+    identifying information.
   </p>
+  <p><strong>How the lookup actually works</strong>, in order:</p>
+  <ol>
+    <li>A few fast, lightweight services are tried <strong>in parallel</strong>, not one-by-one: they're each asked for a title, cover image, and (for one of them) a description, and whichever answers first with a usable piece of information wins that piece. None of these involve Bookmar reading the bookmarked page's actual content — they're asked <em>about</em> the URL, and answer with a summary.</li>
+    <li>Only if a cover image or description is <em>still</em> missing after that does Bookmar go a step further and read the bookmarked page's own HTML directly, extracting whatever <code>og:</code>/<code>twitter:</code>/<code>&lt;title&gt;</code>/favicon tags it finds. This is the one step where more than just the URL leaves your device, since fetching a page necessarily requests its full content — same as opening it in a browser tab would.</li>
+    <li>If nothing above returns anything, Bookmar falls back to a hostname-derived title and a generic favicon, so the bookmark still looks presentable — no further requests are made.</li>
+  </ol>
+  <p>The services involved:</p>
   <ul>
     <li><strong>noembed.com</strong> — a general-purpose lookup used for most sites.</li>
     <li><strong>tiktok.com/oembed</strong> and <strong>youtube.com/oembed</strong> — the official oEmbed endpoints for those two platforms specifically, used instead of the general lookup for better results.</li>
