@@ -371,8 +371,9 @@
     <li><strong>noembed.com</strong> — a general-purpose lookup used for most sites.</li>
     <li><strong>tiktok.com/oembed</strong> and <strong>youtube.com/oembed</strong> — the official oEmbed endpoints for those two platforms specifically, used instead of the general lookup for better results.</li>
     <li><strong>r.jina.ai</strong> — reads the bookmarked page's content to help extract an accurate title when the above don't return one.</li>
+    <li><strong>api.microlink.io</strong> — a server-side page-metadata lookup, raced alongside the others above; it's the only one of these that can return a description, not just a title/image.</li>
     <li><strong>google.com/s2/favicons</strong> — given only the site's domain (not the full URL), returns a favicon when the page doesn't provide its own.</li>
-    <li><strong>api.allorigins.win</strong> and <strong>api.codetabs.com</strong> — used only when running Bookmar as a regular web page (not the installed extension), as a fallback to read a page's content, since browsers block a web page from reading another site's content directly. The installed extension doesn't need this: it's able to read the bookmarked page directly, the same way your browser does when you visit it yourself.</li>
+    <li><strong>api.codetabs.com</strong> — used only when running Bookmar as a regular web page (not the installed extension), as a fallback to read a page's content, since browsers block a web page from reading another site's content directly. The installed extension doesn't need this: it's able to read the bookmarked page directly, the same way your browser does when you visit it yourself.</li>
   </ul>
   <p>
     None of these requests carry cookies, sign-in credentials, or any
